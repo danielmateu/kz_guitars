@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton
+} from '@clerk/nextjs'
+
 // import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -23,29 +31,33 @@ export async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar:state")?.value === "true"
 
   return (
-    <html lang="es" suppressHydrationWarning>
-      <head />
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SidebarProvider
-            defaultOpen={defaultOpen}
+    <ClerkProvider>
+
+      <html lang="es" suppressHydrationWarning>
+        <head />
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
           >
-            <AppSidebar />
-            <SidebarInset>
-              <main>
-                <SidebarTrigger />
-                {children}
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+
+            <SidebarProvider
+              defaultOpen={defaultOpen}
+            >
+              <AppSidebar />
+              <SidebarInset>
+                <main>
+                  <SidebarTrigger />
+                  {children}
+                </main>
+              </SidebarInset>
+            </SidebarProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
 

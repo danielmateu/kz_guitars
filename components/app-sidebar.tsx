@@ -17,6 +17,15 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar"
 
+import {
+    ClerkProvider,
+    SignInButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+    useClerk
+} from '@clerk/nextjs'
+
 import Link from "next/link"
 import { DashboardIcon } from "@radix-ui/react-icons"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
@@ -58,7 +67,7 @@ export function AppSidebar() {
         open, isMobile, openMobile, setOpen, setOpenMobile, state, toggleSidebar
     } = useSidebar()
 
-    // const router = useRouter()
+    const { user } = useClerk()
 
     return (
         <Sidebar
@@ -119,33 +128,22 @@ export function AppSidebar() {
                     </SidebarGroup>
                 </Collapsible>
             </SidebarContent>
-            <SidebarFooter>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuButton>
-                                    <User2 /> Jose Cazorla
-                                    <ChevronUp className="ml-auto" />
-                                </SidebarMenuButton>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                side="top"
-                                className="w-[--radix-popper-anchor-width]"
-                            >
-                                <DropdownMenuItem>
-                                    <span>Cuenta</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>Facturación</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>Sign out</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+            <SidebarFooter
+                className="dark:text-gray-100"
+            >
+
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn
+
+                >
+                    <UserButton
+                    // showName={true}
+                    />
+
+                </SignedIn>
+
             </SidebarFooter>
         </Sidebar>
     )
