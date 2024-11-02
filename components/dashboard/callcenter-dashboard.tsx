@@ -26,6 +26,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 ChartJS.register(
     CategoryScale,
@@ -40,7 +41,7 @@ ChartJS.register(
 )
 
 export default function CallcenterDashboard() {
-    const [activeTab, setActiveTab] = useState('semanal')
+    const [timeFrame, setTimeFrame] = useState<'week' | 'month'>('week')
 
     // Datos de ejemplo
     const weeklyData = {
@@ -80,39 +81,67 @@ export default function CallcenterDashboard() {
     }
 
     const clientRatingData = {
-        labels: ['Positiva', 'Negativa'],
-        datasets: [
-            {
-                data: [75, 25],
-                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-            },
-        ],
+        week: {
+            labels: ['Positiva', 'Negativa'],
+            datasets: [{ data: [75, 25], backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'] }],
+        },
+        month: {
+            labels: ['Positiva', 'Negativa'],
+            datasets: [{ data: [80, 20], backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'] }],
+        },
     }
 
     const avisosFinalizadosData = {
-        labels: ['Con seguimiento', 'Sin seguimiento'],
-        datasets: [
-            {
-                data: [80, 20],
-                backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)'],
-            },
-        ],
+        week: {
+            labels: ['Con seguimiento', 'Sin seguimiento'],
+            datasets: [{ data: [80, 20], backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)'] }],
+        },
+        month: {
+            labels: ['Con seguimiento', 'Sin seguimiento'],
+            datasets: [{ data: [85, 15], backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)'] }],
+        },
     }
 
     const electrodomesticosData = {
-        labels: ['Nevera', 'Lavadora', 'Lavavajillas', 'Horno', 'Vitrocerámica', 'Aire Acondicionado', 'Calentador', 'Secadora', 'Congelador', 'Campana Extractora'],
-        datasets: [
-            {
-                label: 'Eficiencia en la gestión',
-                data: [95, 90, 88, 85, 82, 80, 78, 75, 72, 70],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            },
-        ],
+        week: {
+            labels: ['Nevera', 'Lavadora', 'Lavavajillas', 'Horno', 'Vitrocerámica', 'Aire Acondicionado', 'Calentador', 'Secadora', 'Congelador', 'Campana Extractora'],
+            datasets: [{ label: 'Eficiencia en la gestión', data: [95, 90, 88, 85, 82, 80, 78, 75, 72, 70], backgroundColor: 'rgba(75, 192, 192, 0.6)' }],
+        },
+        month: {
+            labels: ['Nevera', 'Lavadora', 'Lavavajillas', 'Horno', 'Vitrocerámica', 'Aire Acondicionado', 'Calentador', 'Secadora', 'Congelador', 'Campana Extractora'],
+            datasets: [{ label: 'Eficiencia en la gestión', data: [97, 92, 89, 87, 84, 82, 80, 77, 75, 73], backgroundColor: 'rgba(75, 192, 192, 0.6)' }],
+        },
+    }
+
+    const metricsData: { [key in 'week' | 'month']: { llamadas: { value: number; change: string }; avisos: { value: number; change: string }; duracion: { value: string; change: string }; revenue: { value: string; change: string } } } = {
+        week: {
+            llamadas: { value: 245, change: '+20%' },
+            avisos: { value: 189, change: '+15%' },
+            duracion: { value: '5m 32s', change: '-2%' },
+            revenue: { value: '$1,234', change: '+10%' },
+        },
+        month: {
+            llamadas: { value: 1050, change: '+15%' },
+            avisos: { value: 820, change: '+12%' },
+            duracion: { value: '5m 45s', change: '+1%' },
+            revenue: { value: '$5,678', change: '+8%' },
+        },
     }
 
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold mb-6">Dashboard Callcenter</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Dashboard Callcenter</h1>
+                <Select value={timeFrame} onValueChange={(value) => setTimeFrame(value as 'week' | 'month')}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Seleccionar período" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="week">Esta semana</SelectItem>
+                        <SelectItem value="month">Este mes</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
@@ -121,8 +150,8 @@ export default function CallcenterDashboard() {
                         <Phone className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">245</div>
-                        <p className="text-xs text-muted-foreground">+20% que la semana pasada</p>
+                        <div className="text-2xl font-bold">{metricsData[timeFrame].llamadas.value}</div>
+                        <p className="text-xs text-muted-foreground">{metricsData[timeFrame].llamadas.change} que el período anterior</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -131,8 +160,8 @@ export default function CallcenterDashboard() {
                         <CheckCircle className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">189</div>
-                        <p className="text-xs text-muted-foreground">+15% que la semana pasada</p>
+                        <div className="text-2xl font-bold">{metricsData[timeFrame].avisos.value}</div>
+                        <p className="text-xs text-muted-foreground">{metricsData[timeFrame].avisos.change} que el período anterior</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -141,8 +170,8 @@ export default function CallcenterDashboard() {
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">5m 32s</div>
-                        <p className="text-xs text-muted-foreground">-2% que la semana pasada</p>
+                        <div className="text-2xl font-bold">{metricsData[timeFrame].duracion.value}</div>
+                        <p className="text-xs text-muted-foreground">{metricsData[timeFrame].duracion.change} que el período anterior</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -151,8 +180,8 @@ export default function CallcenterDashboard() {
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">$1,234</div>
-                        <p className="text-xs text-muted-foreground">+10% que la semana pasada</p>
+                        <div className="text-2xl font-bold">{metricsData[timeFrame].revenue.value}</div>
+                        <p className="text-xs text-muted-foreground">{metricsData[timeFrame].revenue.change} que el período anterior</p>
                     </CardContent>
                 </Card>
             </div>
@@ -167,14 +196,14 @@ export default function CallcenterDashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="h-[200px]">
-                            <Pie data={clientRatingData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            <Pie data={clientRatingData[timeFrame]} options={{ responsive: true, maintainAspectRatio: false }} />
                         </div>
                         <div className="mt-4">
                             <div className="flex justify-between items-center">
                                 <span>Valoración Positiva</span>
-                                <span className="font-bold">75%</span>
+                                <span className="font-bold">{clientRatingData[timeFrame].datasets[0].data[0]}%</span>
                             </div>
-                            <Progress value={75} className="mt-2" />
+                            <Progress value={clientRatingData[timeFrame].datasets[0].data[0]} className="mt-2" />
                         </div>
                     </CardContent>
                 </Card>
@@ -187,20 +216,20 @@ export default function CallcenterDashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="h-[200px]">
-                            <Pie data={avisosFinalizadosData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            <Pie data={avisosFinalizadosData[timeFrame]} options={{ responsive: true, maintainAspectRatio: false }} />
                         </div>
                         <div className="mt-4">
                             <div className="flex justify-between items-center">
                                 <span>Con Seguimiento</span>
-                                <span className="font-bold">80%</span>
+                                <span className="font-bold">{avisosFinalizadosData[timeFrame].datasets[0].data[0]}%</span>
                             </div>
-                            <Progress value={80} className="mt-2" />
+                            <Progress value={avisosFinalizadosData[timeFrame].datasets[0].data[0]} className="mt-2" />
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-2 gap-4">
                 <Card className="mt-6">
                     <CardHeader>
                         <CardTitle className="flex items-center">
@@ -211,7 +240,7 @@ export default function CallcenterDashboard() {
                     <CardContent>
                         <div className="h-[400px]">
                             <Bar
-                                data={electrodomesticosData}
+                                data={electrodomesticosData[timeFrame]}
                                 options={{
                                     indexAxis: 'y',
                                     responsive: true,
@@ -237,32 +266,18 @@ export default function CallcenterDashboard() {
                     </CardContent>
                 </Card>
 
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-                    <TabsList>
-                        <TabsTrigger value="semanal">Historial Semanal</TabsTrigger>
-                        <TabsTrigger value="mensual">Historial Mensual</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="semanal" className=''>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Rendimiento Semanal</CardTitle>
-                            </CardHeader>
-                            <CardContent className="pl-2 h-96">
-                                <Line data={weeklyData} />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                    <TabsContent value="mensual">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Rendimiento Mensual</CardTitle>
-                            </CardHeader>
-                            <CardContent className="pl-2">
-                                <Bar data={monthlyData} />
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                </Tabs>
+                <Card className="mt-6">
+                    <CardHeader>
+                        <CardTitle>Rendimiento {timeFrame === 'week' ? 'Semanal' : 'Mensual'}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pl-2">
+                        {timeFrame === 'week' ? (
+                            <Line data={weeklyData} />
+                        ) : (
+                            <Bar data={monthlyData} />
+                        )}
+                    </CardContent>
+                </Card>
             </div>
 
 
@@ -280,6 +295,7 @@ export default function CallcenterDashboard() {
                                 <TableHead>Revenue</TableHead>
                                 <TableHead>Valoración</TableHead>
                                 <TableHead>Seguimiento</TableHead>
+                                <TableHead>Electrodoméstico</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -290,6 +306,7 @@ export default function CallcenterDashboard() {
                                 <TableCell>$45</TableCell>
                                 <TableCell>Positiva</TableCell>
                                 <TableCell>Realizado</TableCell>
+                                <TableCell>Nevera</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell>2023-10-31 14:56</TableCell>
@@ -298,14 +315,16 @@ export default function CallcenterDashboard() {
                                 <TableCell>$0</TableCell>
                                 <TableCell>Negativa</TableCell>
                                 <TableCell>N/A</TableCell>
+                                <TableCell>Lavadora</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell>2023-10-31 14:30</TableCell>
+                                <TableCell>2023-10-31  14:30</TableCell>
                                 <TableCell>7m 48s</TableCell>
                                 <TableCell>Aviso Creado</TableCell>
                                 <TableCell>$80</TableCell>
                                 <TableCell>Positiva</TableCell>
                                 <TableCell>Pendiente</TableCell>
+                                <TableCell>Aire Acondicionado</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
