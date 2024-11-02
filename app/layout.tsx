@@ -15,6 +15,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { cookies } from "next/headers"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { ModeToggle } from "@/components/mode-toggle";
 
 export const metadata: Metadata = {
   title: "KZ - Guitars",
@@ -49,7 +50,10 @@ export async function RootLayout({
               <AppSidebar />
               <SidebarInset>
                 <main>
-                  <SidebarTrigger />
+                  <div className="flex items-center justify-between">
+                    <SidebarTrigger />
+                    <ModeToggle />
+                  </div>
                   {children}
                 </main>
               </SidebarInset>

@@ -30,7 +30,8 @@ import Link from "next/link"
 import { DashboardIcon } from "@radix-ui/react-icons"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
-import { useRouter } from "next/router"
+import { usePathname, useRouter } from "next/navigation"
+
 
 // Menu items.
 const items = [
@@ -69,6 +70,8 @@ export function AppSidebar() {
 
     const { user } = useClerk()
 
+    const pathname = usePathname()
+
     return (
         <Sidebar
             variant="inset"
@@ -103,7 +106,9 @@ export function AppSidebar() {
                         <SidebarMenu>
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
+                                    <SidebarMenuButton asChild
+                                        isActive={pathname === item.url}
+                                    >
                                         <Link href={item.url}>
                                             <item.icon />
                                             <span>{item.title}</span>

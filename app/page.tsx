@@ -10,7 +10,7 @@ export default function Home() {
         <h1>
           Hey! This is a Next.js app with Tailwind CSS and TypeScript.{" "}
         </h1>
-        <ModeToggle />
+
 
 
       </div>
